@@ -1,0 +1,85 @@
+<template>
+  <div class="hello" id="app">
+    <h1>{{ title }}</h1>
+
+    <el-input style="width: auto"
+              placeholder="请输入待加密的 明文字符串"
+              v-model="plaintextData"
+              clearable>
+    </el-input>
+
+    <el-button type="primary" @click="clickTest()">点击尝试-加解密</el-button>
+
+    <p>加密后数据：{{encryptData}}</p>
+    <p>解密后数据：{{decryptData}}</p>
+
+  </div>
+</template>
+
+<script>
+
+  import JSEncrypt from 'jsencrypt'
+
+  export default {
+    name: "VueSM2EncryptTest",
+    data() {
+      return {
+        title: "演示-RSA-加解密",
+        data: '',
+        plaintextData: 'pass123',
+        encryptData: '',
+        decryptData: ''
+      };
+    },
+    methods: {
+      // RSA 加密
+      rsa_encrypt(publicKey, data) {
+        // 新建JSEncrypt对象
+        let encryptor = new JSEncrypt();
+        // 设置公钥
+        encryptor.setPublicKey(publicKey);
+        // 加密数据
+        return encryptor.encrypt(data);
+      },
+      // RSA 解密
+      rsa_decrypt(privateKey, data) {
+        // 新建JSEncrypt对象
+        let decrypt = new JSEncrypt();
+        // 设置私钥
+        decrypt.setPrivateKey(privateKey);
+        // 解密数据
+        return decrypt.decrypt(data);
+      },
+
+      clickTest: function () {
+        let data = "pass123";
+
+        //十六进制 密钥对-在线生成  前后端可用
+        //在线生成: http://web.chacuo.net/netrsakeypair
+        let publicKey = "30819f300d06092a864886f70d010101050003818d0030818902818100ad54b602739fa4f6a9b015609f3ed4f7ccedd55a6a8667dd29ce54f4eb0946f81041bcd41557d98ff558282bc9110ae6908062d64a889d16a8d6d760ac59424c39428c232d665bd6071c95c71d0a406ca57e6fd079ae963da22670691cdc1d9072ac707aa7631dc4b0958fe3278ba245801df8f3acf379fb078b30e060c1bd990203010001";
+        let privateKey = "30820277020100300d06092a864886f70d0101010500048202613082025d02010002818100ad54b602739fa4f6a9b015609f3ed4f7ccedd55a6a8667dd29ce54f4eb0946f81041bcd41557d98ff558282bc9110ae6908062d64a889d16a8d6d760ac59424c39428c232d665bd6071c95c71d0a406ca57e6fd079ae963da22670691cdc1d9072ac707aa7631dc4b0958fe3278ba245801df8f3acf379fb078b30e060c1bd99020301000102818100a0113ccc62cea95f09318d6c5f637cf52290f898b90b4a5b99c1ebff0a16d52d3c8618c59ab83838939047f8b7843f96d1175f2f1a41b3203be7bb9a914f14c31e4dccc01687e06264821132b03bb9b4be80474c354046a6362535437b995123a2415b27187934c17e143b5cfcf7182c988f2c7d319c13e98ec063ec17c9ff89024100d9cfbdbf6e56fe02df01b0516b723bf416cd7ae6520b1592b82c9cfcc05834bcd086a34f03a2c07c18eabc1c75f3e6c6d7b3f645ae87b5384d61c73df3d71727024100cbb8806206098f2b5879d301806ebbf5e785c77108d5b1d338a30e8ff6fa6909d439a00704e0586ee5040bc41634373a66d17c496a67729c16ba7805be737d3f024066bee3706119723b627d467231f0322de36fccb0c734e9594bbde7d426dbb50cf884fa96744d9ae52f4fd3aacd4d5fa89eea0a9b36485809161fb0c01dbd71f30241008ec435f47c16a6e6d1924e7576f4237529536f799f9f62878be1798b1aa2528a38d84975a1cd372c40029ddc45534281031d3be49754f7d4bb78e233e44c3b3102402af931e676ee7e1ed69db68433e74f52af4697e36a61ed1556e864478fd6d28a47e67aa972e0069f38d4193a82981aab9c678001aedda0a250adaf24b05028b5";
+
+        //Base64编码 密钥对-后台生成 前后端可用
+        let publicKeyBase64 = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxG5CN2vSdWH25sl8Hjn5kcGjX8IXN1xK4nc6yikSq28RrYhRMR8K7ifIsqLWdQAinT7lwT6+ykUAffDtmJVRMymLAdbrwpVH6bzjSH2vrueDmfh9mj49WphCuA/iAO1poQn8ZgyZYmYOSguYeKDrADKDMIUy+jhchznVJzeylysUuKj7VS/T67kiWgvcSBALnRWyyDVlLoNyrg82yQ/vFbfYOeD6F6YcBNCCK75RUXYpeDK9RnhURaURNDZRsEe8Gqm6UzqE6z6y146HBChMVwDJVtikcCrOnKRjvWnvj2gUyn/Rg6WAZQyusTDrC7RhAaO8HzX600sSlsO6ovJIIwIDAQAB";
+        let privateKeyBase64 = "MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDEbkI3a9J1YfbmyXweOfmRwaNfwhc3XEridzrKKRKrbxGtiFExHwruJ8iyotZ1ACKdPuXBPr7KRQB98O2YlVEzKYsB1uvClUfpvONIfa+u54OZ+H2aPj1amEK4D+IA7WmhCfxmDJliZg5KC5h4oOsAMoMwhTL6OFyHOdUnN7KXKxS4qPtVL9PruSJaC9xIEAudFbLINWUug3KuDzbJD+8Vt9g54PoXphwE0IIrvlFRdil4Mr1GeFRFpRE0NlGwR7waqbpTOoTrPrLXjocEKExXAMlW2KRwKs6cpGO9ae+PaBTKf9GDpYBlDK6xMOsLtGEBo7wfNfrTSxKWw7qi8kgjAgMBAAECggEAKcUIb6CN8EgUqJ7Ptd2+JDB4/TPYm/0UL3QLHFH/llTX/X6vRTLEsD/lfZcC435T3fwx/xXInFpv8Ff7LicSTT7YQFvjZk04LYvtCM0xPpAce/FLRDFX+pvGFD3MYUYa4BOviEPFmhb5kuVEVuJhFnmnS/oHDQ5PHrI9kUlWwK4YkT62+jYfbIrbGIzc9oSNSIJ+OXUSkjYmtby0zG/jiYpb6/2MefCI/X/QANu//R42cAHFBlysT0KD8/y6lxxtZ76GxMnpSBPJq9Tvngzi0mp51jj0nj3e7ee/X2qsY7+hWyQqPp7hcaS+m9vq2Td3/yB+eeVkzTyk1nO1gHwdgQKBgQD64J6Zxe5W3j7yUjA9s8CPScH4+axNzTwcPb/LmTDMPTC9VxODqQMEEJTRAwHQDz0d60y2uLF3SIZHvjP71xJWry760F6SfjT5CIDGtEzpchcKUF4vyDfv1h8JwvjdjRquFhxaAY/JXLW+sUtmB7S5vuBU1f1bhZZGOXnBpAviLQKBgQDIcQlZKn8InQNOPcrD2C1SWYDdceRHJ4LWqURZrZTGrVxjEolpqAFi8EAliYMtCTyBvKfqxsPgAKs4JcH+fDPX+Fbq8x9J+eCLq887HRLrk9eXoLuBdMMDl6pvTW9iRtuP8uQaSTEMQiCO/x2IvgEZxDlOs0DgNd9gvBEHBs5VjwKBgCLlc6o4GfsDVwYl4If0pOhJfi2/rPP1hFL5U+BiIqOGL21m21QJAl5iYBDitjHWrM2omTchYa4R7Hu2PUzekbJ1E7fXnBAMdhnd0OvS0I/4SrQokbFbzEwUIKUe9bb7laZ5dOAgL3v25WDtEGvUzpK3tkSWr3M3lbuW6xTAWNbRAoGARltHCMFd7cwPSPtvnObYobtA/HnpwwAfcPHhSAkh28smTrBHA4sxUWU7XvGx1bEUSAXMeyBhyNLzRrYaLhWyrPBCsh28sd6/7sbT6s/9wCsY1eRZbMtrWGt4K7Fmk3yDvTdo0cE3MjJT812hJEptYHn8E5/f+dNvISliYLEG5AkCgYEArjxb/XdiTThXwpD9HcXSEbeDKgOYqu9gSX84IU6JVh9n+xkz9wzW2Il5BaI+ICjPfDuK0aDEfX2zL2kkKuQ7CMI8fe/iJmSPR94TT5M8OUmGDIru1MYw1rVbHZmUxaR7IiuOUrIjtBPXDkXaRKoXHplktG/OcEivQtcz+Y32CDE=";
+
+        //十六进制 密钥对-后台生成 前后端可用
+        let publicKeyHex = "30820122300d06092a864886f70d01010105000382010f003082010a0282010100c46e42376bd27561f6e6c97c1e39f991c1a35fc217375c4ae2773aca2912ab6f11ad8851311f0aee27c8b2a2d67500229d3ee5c13ebeca45007df0ed98955133298b01d6ebc29547e9bce3487dafaee78399f87d9a3e3d5a9842b80fe200ed69a109fc660c9962660e4a0b9878a0eb003283308532fa385c8739d52737b2972b14b8a8fb552fd3ebb9225a0bdc48100b9d15b2c835652e8372ae0f36c90fef15b7d839e0fa17a61c04d0822bbe515176297832bd46785445a511343651b047bc1aa9ba533a84eb3eb2d78e8704284c5700c956d8a4702ace9ca463bd69ef8f6814ca7fd183a580650caeb130eb0bb46101a3bc1f35fad34b1296c3baa2f248230203010001";
+        let privateKeyHex = "308204bd020100300d06092a864886f70d0101010500048204a7308204a30201000282010100c46e42376bd27561f6e6c97c1e39f991c1a35fc217375c4ae2773aca2912ab6f11ad8851311f0aee27c8b2a2d67500229d3ee5c13ebeca45007df0ed98955133298b01d6ebc29547e9bce3487dafaee78399f87d9a3e3d5a9842b80fe200ed69a109fc660c9962660e4a0b9878a0eb003283308532fa385c8739d52737b2972b14b8a8fb552fd3ebb9225a0bdc48100b9d15b2c835652e8372ae0f36c90fef15b7d839e0fa17a61c04d0822bbe515176297832bd46785445a511343651b047bc1aa9ba533a84eb3eb2d78e8704284c5700c956d8a4702ace9ca463bd69ef8f6814ca7fd183a580650caeb130eb0bb46101a3bc1f35fad34b1296c3baa2f2482302030100010282010029c5086fa08df04814a89ecfb5ddbe243078fd33d89bfd142f740b1c51ff9654d7fd7eaf4532c4b03fe57d9702e37e53ddfc31ff15c89c5a6ff057fb2e27124d3ed8405be3664d382d8bed08cd313e901c7bf14b443157fa9bc6143dcc61461ae013af8843c59a16f992e54456e2611679a74bfa070d0e4f1eb23d914956c0ae18913eb6fa361f6c8adb188cdcf6848d48827e397512923626b5bcb4cc6fe3898a5bebfd8c79f088fd7fd000dbbffd1e367001c5065cac4f4283f3fcba971c6d67be86c4c9e94813c9abd4ef9e0ce2d26a79d638f49e3ddeede7bf5f6aac63bfa15b242a3e9ee171a4be9bdbead93777ff207e79e564cd3ca4d673b5807c1d8102818100fae09e99c5ee56de3ef252303db3c08f49c1f8f9ac4dcd3c1c3dbfcb9930cc3d30bd571383a903041094d10301d00f3d1deb4cb6b8b177488647be33fbd71256af2efad05e927e34f90880c6b44ce972170a505e2fc837efd61f09c2f8dd8d1aae161c5a018fc95cb5beb14b6607b4b9bee054d5fd5b8596463979c1a40be22d02818100c87109592a7f089d034e3dcac3d82d525980dd71e4472782d6a94459ad94c6ad5c63128969a80162f0402589832d093c81bca7eac6c3e000ab3825c1fe7c33d7f856eaf31f49f9e08babcf3b1d12eb93d797a0bb8174c30397aa6f4d6f6246db8ff2e41a49310c42208eff1d88be0119c4394eb340e035df60bc110706ce558f02818022e573aa3819fb03570625e087f4a4e8497e2dbfacf3f58452f953e06222a3862f6d66db5409025e626010e2b631d6accda899372161ae11ec7bb63d4cde91b27513b7d79c100c7619ddd0ebd2d08ff84ab42891b15bcc4c1420a51ef5b6fb95a67974e0202f7bf6e560ed106bd4ce92b7b64496af733795bb96eb14c058d6d1028180465b4708c15dedcc0f48fb6f9ce6d8a1bb40fc79e9c3001f70f1e1480921dbcb264eb047038b3151653b5ef1b1d5b1144805cc7b2061c8d2f346b61a2e15b2acf042b21dbcb1debfeec6d3eacffdc02b18d5e4596ccb6b586b782bb166937c83bd3768d1c137323253f35da1244a6d6079fc139fdff9d36f21296260b106e40902818100ae3c5bfd77624d3857c290fd1dc5d211b7832a0398aaef60497f38214e89561f67fb1933f70cd6d8897905a23e2028cf7c3b8ad1a0c47d7db32f69242ae43b08c23c7defe226648f47de134f933c3949860c8aeed4c630d6b55b1d9994c5a47b222b8e52b223b413d70e45da44aa171e9964b46fce7048af42d733f98df60831";
+
+        //公钥加密
+        let encryptedData = this.rsa_encrypt(publicKeyHex, data);
+        console.log("encryptedData: " + encryptedData);
+        this.encryptData = encryptedData;
+
+        //私钥解密
+        let decryptdata = this.rsa_decrypt(privateKeyHex, encryptedData);
+        console.log("decryptdata: " + decryptdata);
+        this.decryptData = decryptdata;
+      }
+    },
+  };
+</script>
+
+<style scoped>
+</style>

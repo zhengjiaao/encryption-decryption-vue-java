@@ -1,0 +1,49 @@
+HELP.md
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
+
+
+encrypt-vue-demo/.DS_Store
+encrypt-vue-demo/node_modules/
+encrypt-vue-demo/dist/
+encrypt-vue-demo/npm-debug.log*
+encrypt-vue-demo/yarn-debug.log*
+encrypt-vue-demo/yarn-error.log*
+
+# Editor directories and files
+encrypt-vue-demo/.idea
+encrypt-vue-demo/.vscode
+encrypt-vue-demo/*.suo
+encrypt-vue-demo/*.ntvs*
+encrypt-vue-demo/*.njsproj
+encrypt-vue-demo/*.sln
